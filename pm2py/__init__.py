@@ -59,34 +59,35 @@ class PM2:
         return self.command(*args, **kwds)
 
     def list(self) -> List[PM2Process]:
-        command: RunningCommand = self.command.jlist().wait()
+        command: RunningCommand = self.command.jlist()
         result = []
-        for process in loads(command.stdout.decode("utf-8")):
+        for process in loads(command):
             result.append(PM2Process(process))
         return result
-
+        
     def start(self, name, extra_args=[]) -> bool:
+        print(name, extra_args)
         command: RunningCommand = self.command.start(
             name, *self.extra_args, *extra_args)
-        self.lines = command.stdout.decode("utf-8").splitlines()
+        self.lines = command.splitlines()
         return (self.lines[0].startswith("[PM2] Starting") or self.lines[0].startswith("[PM2] cron restart at")) and self.lines[2 if self.lines[0].startswith("[PM2] cron restart at") else 1].startswith("[PM2] Done.")
 
     def stop(self, name, extra_args=[]) -> bool:
         command: RunningCommand = self.command.stop(
             name, *self.extra_args, *extra_args)
-        self.lines = command.stdout.decode("utf-8").splitlines()
+        self.lines = command.splitlines()
         return self.lines[1].endswith("✓")
 
     def restart(self, name, extra_args=[]) -> bool:
         command: RunningCommand = self.command.restart(
             name, *self.extra_args, *extra_args)
-        self.lines = command.stdout.decode("utf-8").splitlines()
+        self.lines = command.splitlines()
         return self.lines[2 if self.lines[0].startswith("Use --update-env to update environment") else 1].endswith("✓")
-
+        
     def delete(self, name, extra_args=[]) -> bool:
         command: RunningCommand = self.command.delete(
             name, *self.extra_args, *extra_args)
-        self.lines = command.stdout.decode("utf-8").splitlines()
+        self.lines = command.splitlines()
         return self.lines[1].endswith("✓")
 
     def logs(self, function, name="", extra_args=["--json"]) -> str:

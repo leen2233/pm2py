@@ -95,3 +95,16 @@ class PM2:
             name, *self.extra_args, *extra_args, _iter=True)
         for line in command:
             function(loads(line))
+    
+    def log_file(self, name: str = "") -> dict:
+        processes = self.list()
+        logs = dict()
+        for process in processes:
+            if process.name == name:
+                error_log_path = process.logs["error"]
+                with open(error_log_path, "r") as file:
+                    logs["error"] = file.readlines()
+                out_log_path = process.logs["out"]
+                with open(out_log_path, "r") as file:
+                    logs["out"] = file.readlines()
+        return logs

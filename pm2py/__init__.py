@@ -92,17 +92,17 @@ class PM2:
         for line in command:
             function(loads(line))
 
-        def log_file(self, name: str = "") -> dict:
-            processes = self.list()
-            logs = dict()
-            for process in processes:
-                if process.name == name:
-                    error_log_path = process.json_data.get("pm2_env", {}).get("pm_err_log_path", None)
-                    if error_log_path:
-                        with open(error_log_path, "r") as file:
-                            logs["error"] = file.readlines()
-                    out_log_path = process.json_data.get("pm2_env", {}).get("pm_out_log_path", None)
-                    if out_log_path:
-                        with open(out_log_path, "r") as file:
-                            logs["out"] = file.readlines()
-            return logs
+    def log_file(self, name: str = "") -> dict:
+        processes = self.list()
+        logs = dict()
+        for process in processes:
+            if process.name == name:
+                error_log_path = process.json_data.get("pm2_env", {}).get("pm_err_log_path", None)
+                if error_log_path:
+                    with open(error_log_path, "r") as file:
+                        logs["error"] = file.readlines()
+                out_log_path = process.json_data.get("pm2_env", {}).get("pm_out_log_path", None)
+                if out_log_path:
+                    with open(out_log_path, "r") as file:
+                        logs["out"] = file.readlines()
+        return logs
